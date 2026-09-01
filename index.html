@@ -1,0 +1,26 @@
+<!doctype html>
+<html><head><title>Student Score Predictor</title><style>
+body{font-family:Arial;max-width:720px;margin:50px auto;padding:20px}
+input,select,button{display:block;width:100%;padding:10px;margin:8px 0 18px;box-sizing:border-box}
+button{cursor:pointer}.result{margin-top:20px;padding:15px;border:1px solid #ccc}
+</style></head>
+<body><h1>Student Final Score Predictor</h1><p>Enter student details to get a model prediction.</p>
+<form id="form">
+<label>Age</label><input id="Age" type="number" value="21">
+<label>Attendance</label><input id="Attendance" type="number" step="0.1" value="85">
+<label>Study Hours</label><input id="Study_Hours" type="number" step="0.1" value="5">
+<label>Previous Score</label><input id="Previous_Score" type="number" step="0.1" value="78">
+<label>Department</label><select id="Department"><option>CSE</option><option>ECE</option><option>EEE</option></select>
+<button type="submit">Predict Final Score</button></form>
+<div class="result" id="result">Prediction will appear here.</div>
+<script>
+document.getElementById("form").onsubmit=async(e)=>{
+e.preventDefault();
+const fields=["Age","Attendance","Study_Hours","Previous_Score"];
+const body={}; fields.forEach(k=>body[k]=Number(document.getElementById(k).value));
+body.Department=document.getElementById("Department").value;
+const r=await fetch("/predict",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+const d=await r.json(); document.getElementById("result").textContent=
+d.predicted_final_score!==undefined ? "Predicted Final Score: "+d.predicted_final_score : "Error: "+d.error;
+};
+</script></body></html>
